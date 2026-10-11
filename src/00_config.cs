@@ -1,5 +1,5 @@
 // ========================================
-//         DUTC INVENTORY  v2.0.13
+//         DUTC INVENTORY  v2.0.14
 // ========================================
 // Sorting + even container balancing, auto container assignment, bottle filling
 // (works!), special loadout containers, autocrafting via Custom Data with sprite
@@ -95,6 +95,8 @@ bool craftCountGuns = true;         // ammo already loaded in turrets and fixed 
 bool craftCountSpecials = true;     // items inside Special containers count
 
 bool feedRefineries = true;         // keep refineries loaded with ore
+                                    // ingot quotas: "Ingot/Iron=50000" on the Autocrafting Custom Data stops
+                                    // feeding that ore at the target and resumes below it
 bool balanceRefineries = true;      // equalize each ore across all refineries
 bool sortRefineryQueue = true;      // put priority ore at the front
 

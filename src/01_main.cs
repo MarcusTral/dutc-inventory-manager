@@ -22,6 +22,9 @@ Dictionary<MyItemType,double> stock = new Dictionary<MyItemType,double>();
 Dictionary<MyItemType,double> craftStock = new Dictionary<MyItemType,double>();
 Dictionary<MyItemType,double> stockTmpC = new Dictionary<MyItemType,double>();
 Dictionary<string,MyItemType> byName = new Dictionary<string,MyItemType>();
+// Ingot/Iron=50000 rows on the Autocrafting list: refinery feeding stops at the
+// target and resumes below it. Written by Craft, read by Refine.
+Dictionary<string,double> ingotTarget = new Dictionary<string,double>();
 Dictionary<MyDefinitionId,double> queued = new Dictionary<MyDefinitionId,double>();
 Dictionary<string,MyDefinitionId> bpCache = new Dictionary<string,MyDefinitionId>();
 HashSet<string> noBp = new HashSet<string>();

@@ -170,6 +170,7 @@ bool Craft()
     entries.Sort((a, z) => a[0].CompareTo(z[0]));
 
     craftRows.Clear();
+    ingotTarget.Clear();
     foreach (var e in entries)
     {
         string name = e[0]; string mods = e[2];
@@ -177,6 +178,15 @@ bool Craft()
         MyItemType t;
         double cur = byName.TryGetValue(name, out t) ? CountOfCraft(t) : 0;
         if (mods.Contains("I")) { craftRows.Add(new CRow { name = name, cur = cur, want = want, state = -2 }); continue; }
+        // refinery quota row: Ingot/Iron=50000 keeps that many ingots - the
+        // refineries stop being fed the ore at the target and resume below it.
+        // No assembler involved, so no blueprint search either
+        if (name.StartsWith("Ingot/"))
+        {
+            if (want > 0) ingotTarget[name.Substring(6)] = want;
+            craftRows.Add(new CRow { name = name, cur = cur, want = want, state = 0 });
+            continue;
+        }
         bool ovFail = false;
         if (e[3] != "" && !bpCache.ContainsKey(name))
         {
@@ -286,6 +296,7 @@ void SetupCraftCD(IMyTextPanel master)
     sbcd.Append("# Edit the number = wanted stock. The screen only displays status.\n");
     sbcd.Append("# Modifiers after the number:  P = craft first (priority),  I = ignore\n");
     sbcd.Append("#   D = disassemble the excess above the wanted amount (e.g. SteelPlate=1000D)\n");
+    sbcd.Append("# Refinery quota: Ingot/Iron=50000 keeps 50k iron ingots - ore feeding stops at the target, resumes below it.\n");
     sbcd.Append("# Modded item stuck on NoBP? Force its blueprint: Name=100 BP:BlueprintSubtype\n");
     sbcd.Append("# Blueprint name unknown? Queue the item once by hand and hover it in the assembler's production queue.\n");
     sbcd.Append("# Exact ITEM name unknown? Run the PB with argument:  items <part of the name>\n");

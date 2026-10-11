@@ -1,5 +1,15 @@
 // ---------- MODULE: refineries, ice, uranium, cleanup, bottle top-up ----------
 
+// ore whose INGOT already sits at its Ingot/X=N quota is not fed to refineries -
+// what is loaded finishes, feeding resumes when the stock drops below the target
+bool IngotFull(string ore)
+{
+    string ing = ore == "Scrap" ? "Iron" : ore;
+    double t;
+    if (!ingotTarget.TryGetValue(ing, out t)) return false;
+    return CountOfCraft(MyItemType.MakeIngot(ing)) >= t;
+}
+
 bool Refine()
 {
     if (refineries.Count == 0) return true;
@@ -11,6 +21,7 @@ bool Refine()
             double freeL = ((double)inv.MaxVolume - (double)inv.CurrentVolume) * 1000.0;
             foreach (var ore in orePriority)
             {
+                if (IngotFull(ore)) continue;
                 var t = MyItemType.MakeOre(ore);
                 if (CountOf(t) <= 0) continue;
                 if (!inv.CanItemsBeAdded(1, t)) continue;

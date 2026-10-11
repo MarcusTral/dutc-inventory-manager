@@ -9,7 +9,7 @@ Issues and pull requests welcome - most fixes in this script came from the commu
 [list]
 [*][b]Item sorting[/b] - everything routes into type containers: Ores / Ingots / Components / Tools / Ammo / Bottles / Food
 [*][b]Food category[/b] - food, ingredients, seeds and produce get their own containers, vegetables from generic-typed mods included (extendable foodWords list in the config); modded bottle-type items (powerbanks, shields, paint guns) no longer cycle through tanks
-[*][b]Even container balancing[/b] - items split equally across same-type containers (9 tools / 3 boxes = 3 each)
+[*][b]Even container balancing[/b] - items split equally across same-type containers
 [*][b]Turret ammo loading[/b] - every turret and fixed gun kept stocked, subgrids and docked ships included
 [*][b]Auto container assignment[/b] - type full or missing? Biggest free cargo gets tagged automatically
 [*][b]Bottle refilling that works[/b] - bottles route through tanks with gas, and bottles already stored get topped up too
@@ -59,6 +59,7 @@ Better: the script [b]learns from your assemblers[/b] - queue a stubborn modded 
 Find the exact ITEM name: run the PB with argument [b]items <part of the name>[/b]. Test a blueprint name: argument [b]bp <name>[/b]. A wrong BP: name shows [b]BP?[/b] on the screen.
 [b][NoBP][/b] on screen = no assembler can craft that item (modded or not craftable).
 Quotas count the BASE stock: items on docked ships don't satisfy them (they leave with the ship). Turrets and Specials count by default (switches: craftCountDocked / craftCountGuns / craftCountSpecials).
+Refinery quotas: [b]Ingot/Iron=50000[/b] keeps 50k iron ingots - ore feeding stops at the target and resumes below it.
 Deep blueprint searching needs no setup: it runs automatically for any item with a wanted amount above zero, and every blueprint it finds (or rules out) is remembered in the PB's Storage across recompiles and world reloads.
 Multiple screens? Name them [b]Autocrafting 1[/b], [b]Autocrafting 2[/b]... - the list flows in that order.
 
@@ -73,7 +74,7 @@ Multiple screens? Name them [b]Autocrafting 1[/b], [b]Autocrafting 2[/b]... - th
 
 [h1]Plays Nice With Everything[/h1]
 [list]
-[*][b]Build Planner works remotely[/b] - the script never cancels queue entries it didn't create, so planner orders survive, get their ingots fed, and Withdraw picks components up from storage at any access point
+[*][b]Build Planner works remotely[/b] - the script never cancels queue entries it didn't create, so planner orders survive and get their ingots fed
 [*][b]Nanobot Build & Repair[/b] - BaR blocks are auto-detected and fully hands-off: their inventories and assembler queues are never touched
 [*][b]Multiple instances[/b] - a base and a docked ship can each run this script; they elect one active manager (station beats ship), the other keeps its screens and machine refills
 [/list]
