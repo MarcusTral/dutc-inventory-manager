@@ -331,8 +331,18 @@ IMyTextSurface SurfaceFor(IMyTerminalBlock b, string[] tags)
 
 // ----- sprite helpers (PowerDeck style) -----
 
+HashSet<int> drawnOnce = new HashSet<int>();
+
 MySpriteDrawFrame Begin(IMyTextSurface s)
 {
+    // a surface we already switched to sprites that is back in TEXT mode means
+    // another script keeps writing it - almost always an Isy's IIM that is still
+    // running next to this one, flickering the screen between the two layouts
+    // (thanks NotResponding)
+    int bkey = s.GetHashCode();
+    if (drawnOnce.Contains(bkey) && s.ContentType != ContentType.SCRIPT)
+        Warn("Another inventory script is overwriting my screens - if Isy's IIM is still on a PB somewhere, remove or stop it!");
+    drawnOnce.Add(bkey);
     s.ContentType = ContentType.SCRIPT;
     s.Script = "";
     var f = s.DrawFrame();

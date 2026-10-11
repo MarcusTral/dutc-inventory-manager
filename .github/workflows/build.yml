@@ -28,6 +28,7 @@ jobs:
           $o = ($raw.ToCharArray() | Where-Object { $_ -eq '{' }).Count
           $c = ($raw.ToCharArray() | Where-Object { $_ -eq '}' }).Count
           if ($o -ne $c) { throw "Unbalanced braces: $o open / $c close" }
+          if ($raw.Length -gt 95000) { Write-Host "::warning::Within $(100000 - $raw.Length) chars of the Programmable Block limit" }
           Write-Host "OK: $($raw.Length) chars, braces $o/$c"
 
       - name: Upload build artifact

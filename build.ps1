@@ -32,7 +32,17 @@ $openB = ($raw.ToCharArray() | Where-Object { $_ -eq '{' }).Count
 $closeB = ($raw.ToCharArray() | Where-Object { $_ -eq '}' }).Count
 Write-Host "Characters : $($raw.Length) / 100000 (PB limit)"
 Write-Host "Braces     : $openB / $closeB"
-if ($raw.Length -gt 100000) { Write-Host "TOO BIG for the Programmable Block!" -ForegroundColor Red }
-elseif ($openB -ne $closeB) { Write-Host "WARNING: unbalanced braces!" -ForegroundColor Yellow }
-else { Write-Host "OK - paste DutcInventory_paste.cs into the Programmable Block." -ForegroundColor Green }
+# over the limit or unbalanced = BUILD FAILURE, not a note someone can scroll past
+if ($raw.Length -gt 100000) {
+    Write-Host "FAIL: $($raw.Length) chars - TOO BIG for the Programmable Block (limit 100000)!" -ForegroundColor Red
+    exit 1
+}
+if ($openB -ne $closeB) {
+    Write-Host "FAIL: unbalanced braces ($openB open / $closeB close)!" -ForegroundColor Red
+    exit 1
+}
+if ($raw.Length -gt 95000) {
+    Write-Host "WARNING: within $(100000 - $raw.Length) chars of the PB limit - time to trim." -ForegroundColor Yellow
+}
+Write-Host "OK - paste DutcInventory_paste.cs into the Programmable Block." -ForegroundColor Green
 try { Set-Clipboard -Value $raw; Write-Host "Copied to clipboard." -ForegroundColor Green } catch { }
