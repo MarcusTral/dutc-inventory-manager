@@ -115,6 +115,25 @@ bool Craft()
             if (name.StartsWith("MyObjectBuilder_")) name = name.Substring(16);
             if (name.Equals("UIScale", StringComparison.OrdinalIgnoreCase)) continue;
             string val = l.Substring(eq + 1).Trim();
+            // refining order without touching the script: OrePriority=Iron,Nickel,...
+            // left-out ores keep their default order at the end (thanks bringr32)
+            if (name.Equals("OrePriority", StringComparison.OrdinalIgnoreCase))
+            {
+                var np = new List<string>();
+                foreach (var tok in val.Split(','))
+                {
+                    var nm2 = tok.Trim();
+                    if (nm2.Length == 0) continue;
+                    foreach (var o in orePriority) if (string.Equals(o, nm2, StringComparison.OrdinalIgnoreCase)) { nm2 = o; break; }
+                    if (!np.Contains(nm2)) np.Add(nm2);
+                }
+                if (np.Count > 0)
+                {
+                    foreach (var o in orePriority) if (!np.Contains(o)) np.Add(o);
+                    orePriority = np;
+                }
+                continue;
+            }
             string bpOv = "";
             // BP: captures to the END of the line - modded blueprint subtypes can
             // contain spaces, so put BP: last (thanks The Burger Buster)

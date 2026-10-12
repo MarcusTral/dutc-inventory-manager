@@ -1,5 +1,5 @@
 // ========================================
-//         DUTC INVENTORY  v2.0.15
+//         DUTC INVENTORY  v2.0.16
 // ========================================
 // Sorting + even container balancing, auto container assignment, bottle filling
 // (works!), special loadout containers, autocrafting via Custom Data with sprite
@@ -102,7 +102,9 @@ bool sortRefineryQueue = true;      // put priority ore at the front
 
 bool fillTurrets = true;            // keep turrets + fixed guns loaded (subgrids included)
 double magsPerTurret = 20;          // magazines of each accepted ammo type per weapon
-// refining order, top = first:
+// refining order, top = first. Override WITHOUT recompiling: put a line like
+// "OrePriority=Iron,Nickel,Cobalt" on the Autocrafting LCD's Custom Data -
+// ores you leave out keep their default order at the end
 List<string> orePriority = new List<string>{ "Stone","Iron","Nickel","Cobalt","Silicon","Uranium","Silver","Gold","Platinum","Magnesium","Scrap" };
 
 bool iceBalancing = true;           // spread ice across O2/H2 generators

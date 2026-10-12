@@ -43,6 +43,34 @@ bool Refine()
                 }
                 if (bi > 0) inv.TransferItemTo(inv, bi, 0, true);
             }
+            // a refinery stuffed with low-priority ore blocks better ore waiting in
+            // cargo: evict the worst stack from the BACK of the queue - never the
+            // one being processed (thanks bringr32, "pull the cobalt out")
+            if (feedRefineries && (double)inv.CurrentVolume > (double)inv.MaxVolume * 0.4)
+            {
+                int bestAvail = 999;
+                for (int i = 0; i < orePriority.Count && bestAvail == 999; i++)
+                {
+                    if (IngotFull(orePriority[i])) continue;
+                    var ot = MyItemType.MakeOre(orePriority[i]);
+                    foreach (var w in cats[ORE])
+                        if ((double)w.GetInventory(0).GetItemAmount(ot) > 100) { bestAvail = i; break; }
+                }
+                if (bestAvail < 999)
+                {
+                    for (int i = items.Count - 1; i >= 1; i--)
+                    {
+                        int pr = orePriority.IndexOf(items[i].Type.SubtypeId);
+                        if (pr < 0) pr = 999;
+                        if (pr <= bestAvail) continue;
+                        var w = DestFor(ORE, r);
+                        if (w == null) break;
+                        PushFrom(inv, items[i].Type, (double)items[i].Amount, w.GetInventory(0));
+                        Act("Evicted " + items[i].Type.SubtypeId + " from " + StripPct(r.CustomName));
+                        break;
+                    }
+                }
+            }
         }
     }
     // equalize each ore across all refineries (rich -> poor, direct transfer)
