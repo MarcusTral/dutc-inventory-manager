@@ -604,11 +604,17 @@ int BpState(string name, out MyDefinitionId bp, bool deep)
     string coreN = BpCore(baseN).ToUpper();
     if (coreN.Length >= 5)
     {
+        // TIER GUARD: "Welder" must never adopt "Welder3" - the trailing number of
+        // both cores has to match exactly, or tier 1 rows disassemble tier 3 tools
+        // (thanks Marcus Tral)
+        string cnBase = TrimDigits(coreN); string cnTier = coreN.Substring(cnBase.Length);
         foreach (var lb in learnedBps)
         {
             string lc = BpCore(lb.SubtypeName).ToUpper();
             if (lc.Length < 4) continue;
-            if (lc != coreN && !lc.Contains(coreN) && !coreN.Contains(lc)) continue;
+            string lcBase = TrimDigits(lc); string lcTier = lc.Substring(lcBase.Length);
+            if (cnTier != lcTier) continue;
+            if (lcBase != cnBase && !lcBase.Contains(cnBase) && !cnBase.Contains(lcBase)) continue;
             MyDefinitionId t2;
             if (TestBp(lb.SubtypeName, out t2)) { bpCache[name] = t2; return 1; }
         }
@@ -649,6 +655,13 @@ int BpState(string name, out MyDefinitionId bp, bool deep)
     probePos.Remove(name);
     noBp.Add(name);
     return -1;
+}
+
+string TrimDigits(string s)
+{
+    int e = s.Length;
+    while (e > 0 && char.IsDigit(s[e - 1])) e--;
+    return s.Substring(0, e);
 }
 
 // strip the decorations mods put around the shared core of an item and its
