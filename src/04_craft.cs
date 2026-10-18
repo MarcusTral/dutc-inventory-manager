@@ -375,8 +375,11 @@ int DrawCraftPanel(IMyTextSurface s, int index, int start, bool last, float us)
     string hd = "DUTC AUTOCRAFTING" + (craftLCDs.Count > 1 ? " " + (index + 1) + "/" + craftLCDs.Count : "");
     f.Add(Txt(hd, off + new Vector2(W * 0.5f, 10f * sc), 1.05f * sc, UI_DIM));
     int okC = 0, craftC = 0, lowC = 0, nobpC = 0, chkC = 0;
+    int total = 0;
     foreach (var r in craftRows)
     {
+        if (r.state == -2) continue;
+
         if (r.state == -1) nobpC++;
         else if (r.state == -3) chkC++;
         else if (r.state == 0 && r.want > 0)
@@ -385,6 +388,7 @@ int DrawCraftPanel(IMyTextSurface s, int index, int start, bool last, float us)
             else if (r.inQ > 0) craftC++;
             else lowC++;
         }
+        total++;
     }
     string counts = okC + " ok   " + craftC + " crafting   " + lowC + " low   " + nobpC + " noBP";
     if (chkC > 0) counts += "   " + chkC + " checking";
@@ -394,7 +398,6 @@ int DrawCraftPanel(IMyTextSurface s, int index, int start, bool last, float us)
     float rowPx = 26f * sc;
     float yStart = 77f * sc;
     int maxRows = Math.Max(1, (int)((H - 18f * sc - yStart) / rowPx));
-    int total = craftRows.Count;
     int offR = start;
     if (last)
     {
@@ -414,11 +417,11 @@ int DrawCraftPanel(IMyTextSurface s, int index, int start, bool last, float us)
     int maxChars = (int)(W * 0.42f / (10.5f * sc));
     float y = yStart;
     int drawn = 0;
-    for (int i = offR; i < total && drawn < maxRows; i++)
+    for (int i = offR; i < craftRows.Count() && drawn < maxRows; i++)
     {
         var r = craftRows[i];
         Color col; string valTxt; double frac = -1;
-        if (r.state == -2) { col = UI_DIM; valTxt = "ignored"; }
+        if (r.state == -2) { continue; }
         else if (r.state == -3) { col = UI_DIM; valTxt = Num(r.cur) + "  checking.."; }
         else if (r.state == -4) { col = UI_BAD; valTxt = Num(r.cur) + "  BP?"; }
         else if (r.state == -1) { col = UI_BAD; valTxt = Num(r.cur) + "  NoBP"; }
