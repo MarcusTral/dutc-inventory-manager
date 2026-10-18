@@ -614,7 +614,11 @@ int BpState(string name, out MyDefinitionId bp, bool deep)
             if (lc.Length < 4) continue;
             string lcBase = TrimDigits(lc); string lcTier = lc.Substring(lcBase.Length);
             if (cnTier != lcTier) continue;
-            if (lcBase != cnBase && !lcBase.Contains(cnBase) && !cnBase.Contains(lcBase)) continue;
+            // EXACT core match only: containment let an ammo row (AutomaticRifleGun_Mag_20rd)
+            // adopt its RIFLE's blueprint (AutomaticRifle) because one name starts with the
+            // other - excess ammo then dismantled rifles (thanks Marcus Tral, again).
+            // The confirmed modded cases (ATLAS) match by equality after core-stripping anyway.
+            if (lcBase != cnBase) continue;
             MyDefinitionId t2;
             if (TestBp(lb.SubtypeName, out t2)) { bpCache[name] = t2; return 1; }
         }
